@@ -1,0 +1,36 @@
+version: "2"
+
+volumes:
+  nfsgitlab_etc:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=10.0.0.100,rw,nfsvers=4,async
+      device: ":/mnt/barracuda/gitlab/etc"
+  nfsgitlab_logs:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=10.0.0.100,rw,nfsvers=4,async
+      device: ":/mnt/barracuda/gitlab/logs"
+  nfsgitlab_opt:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=10.0.0.100,rw,nfsvers=4,async
+      device: ":/mnt/barracuda/gitlab/opt"
+
+
+services:
+  gitlab:
+    image: gitlab/gitlab-ce:latest
+    container_name: gitlab
+    restart: unless-stopped
+    ports:
+      - 443:443
+      - 80:80
+      - 2222:2222
+    volumes:
+      - nfsgitlab_etc:/etc/gitlab/etc
+      - nfsgitlab_logs:/var/log/gitlab/logs
+      - nfsgitlab_opt:/var/opt/gitlab/opt
